@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 
+//interface
+import { ITask } from './Interfaces/Task';
 
 //styles
 import './index.css';
@@ -11,14 +13,25 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
+import Modal from './components/Modal';
 
 function App() {
+
+  const [taskList, setTaskList] = useState<ITask[]>([])
+
+  function deleteTask(id: number) {
+
+    setTaskList(taskList.filter((task) => task.id !== id))
+
+  }
 
   return (
 
     <>
 
       <div className="App">
+
+        <Modal children={<TaskForm btnText='Editar Tarefa' taskList={taskList}/>} />
 
         <Header />
 
@@ -30,13 +43,13 @@ function App() {
             </h2>
           </div>
 
-          <TaskForm  btnText='Criar Tarefa'/>
+          <TaskForm btnText='Criar Tarefa' taskList={taskList} setTaskList={setTaskList} />
 
           <div>
             <h2>
               Suas tarefas
             </h2>
-            <TaskList />
+            <TaskList taskList={taskList} handleDelete={deleteTask} />
           </div>
 
 
