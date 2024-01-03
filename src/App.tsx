@@ -19,9 +19,41 @@ function App() {
 
   const [taskList, setTaskList] = useState<ITask[]>([])
 
+  const [taskToUpdate, setTaskToUpdate] = useState<ITask | null>(null)
+
   function deleteTask(id: number) {
 
     setTaskList(taskList.filter((task) => task.id !== id))
+
+  }
+
+  function hideOrShowModal(display: boolean) {
+    const modal = document.querySelector('#modal')
+    if (display) {
+      modal!.classList.remove("hide")
+    } else {
+      modal!.classList.add("hide")
+    }
+  }
+
+  function editTask(task: ITask): void{
+    hideOrShowModal(true)
+    setTaskToUpdate(task)
+  }
+
+  function updateTask(id: number, title: string, difficulty: number):void {
+
+    const updatedTask: ITask = {
+      id, title, difficulty
+    }
+
+    const updatedItems = taskList.map((task) => {
+      return task.id === id ? updatedTask : task
+    })
+
+    setTaskList(updatedItems)
+
+    hideOrShowModal(false)
 
   }
 
@@ -31,7 +63,7 @@ function App() {
 
       <div className="App">
 
-        <Modal children={<TaskForm btnText='Editar Tarefa' taskList={taskList}/>} />
+        <Modal children={<TaskForm btnText='Editar Tarefa' taskList={taskList} task={taskToUpdate} handleUpdate={updateTask}/> } />
 
         <Header />
 
@@ -43,13 +75,13 @@ function App() {
             </h2>
           </div>
 
-          <TaskForm btnText='Criar Tarefa' taskList={taskList} setTaskList={setTaskList} />
+          <TaskForm btnText='Criar Tarefa' taskList={taskList} setTaskList={setTaskList}  />
 
           <div>
             <h2>
               Suas tarefas
             </h2>
-            <TaskList taskList={taskList} handleDelete={deleteTask} />
+            <TaskList taskList={taskList} handleDelete={deleteTask} handleEdit={editTask} />
           </div>
 
 

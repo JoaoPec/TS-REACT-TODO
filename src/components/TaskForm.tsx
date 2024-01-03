@@ -11,9 +11,11 @@ interface Props {
     btnText: string
     taskList: ITask[]
     setTaskList?: React.Dispatch<React.SetStateAction<ITask[]>>
+    task?: ITask | null
+    handleUpdate?(id: number, title: string, difficulty: number):void 
 }
 
-const TaskForm = ({ btnText, taskList, setTaskList }: Props) => {
+const TaskForm = ({ btnText, taskList, setTaskList, task, handleUpdate }: Props) => {
 
     const [id, setId] = useState<number>(0)
 
@@ -21,25 +23,37 @@ const TaskForm = ({ btnText, taskList, setTaskList }: Props) => {
 
     const [difficulty, setDifficulty] = useState<number>(0)
 
+    useEffect(() => {
+        if (task) {
+            setId(task.id)
+            setTitle(task.title)
+            setDifficulty(task.difficulty)
+        }
+    }, [task])
+
 
     function addTaskHandler(e: FormEvent<HTMLFormElement>) {
 
         e.preventDefault()
 
-        const id: number = Math.floor(Math.random() * 1000)
+        if (handleUpdate) {
+            handleUpdate(id, title, difficulty)
+        } else {
 
-        const newTask: ITask = {
-            id, title, difficulty
+            const id: number = Math.floor(Math.random() * 1000)
+
+            const newTask: ITask = {
+                id, title, difficulty
+            }
+            setTaskList!([...taskList, newTask])
+
+            setId(id)
+
+            setTitle('')
+
+            setDifficulty(0)
         }
-        setTaskList!([...taskList, newTask])
 
-        setId(id)
-
-        setTitle('')
-
-        setDifficulty(0)
-
-        console.log(taskList)
     }
 
 
